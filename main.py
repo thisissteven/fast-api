@@ -50,7 +50,12 @@ from utils import load_image_into_numpy_array
 # If you use h5 type uncomment line below
 # model = tf.keras.models.load_model('./my_model.h5')
 # If you use saved model type uncomment line below
-# model = tf.saved_model.load("./my_model_folder")
+
+# Set the experimental_io_device option
+load_options = tf.saved_model.LoadOptions(experimental_io_device='/job:localhost')
+
+# Load the SavedModel with the specified load options
+model = tf.saved_model.load("./my_model_folder", options=load_options)
 
 app = FastAPI()
 
