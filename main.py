@@ -33,7 +33,9 @@
 
 ## Start your code here! ##
 
+import json
 import os
+import numpy as np
 import uvicorn
 import traceback
 import tensorflow as tf
@@ -68,28 +70,6 @@ def index():
 class RequestText(BaseModel):
     text:str
 
-@app.post("/predict_text")
-def predict_text(req: RequestText, response: Response):
-    try:
-        # In here you will get text sent by the user
-        text = req.text
-        print("Uploaded text:", text)
-        
-        # Step 1: (Optional) Do your text preprocessing
-        
-        # Step 2: Prepare your data to your model
-        
-        # Step 3: Predict the data
-        # result = model.predict(...)
-        
-        # Step 4: Change the result your determined API output
-        
-        return "Endpoint not implemented"
-    except Exception as e:
-        traceback.print_exc()
-        response.status_code = 500
-        return "Internal Server Error"
-
 # If your model need image input use this endpoint!
 @app.post("/predict_image")
 def predict_image(uploaded_file: UploadFile, response: Response):
@@ -103,18 +83,30 @@ def predict_image(uploaded_file: UploadFile, response: Response):
         # You can use this file, to load and do processing
         # later down the line
         image = load_image_into_numpy_array(uploaded_file.file.read())
+        # Step 1: (Optional, but you should have one) Do your image preprocessing
+        image = np.resize(image, (150, 150, 3)) / 255.0
+
         print("Image shape:", image.shape)
         
-        # Step 1: (Optional, but you should have one) Do your image preprocessing
         
-        # Step 2: Prepare your data to your model
+        # Step 2: Prepare your data for your model
+        input_data = tf.constant([image], dtype=tf.float32)
         
         # Step 3: Predict the data
-        # result = model.predict(...)
+        result = model(input_data)
+        labels = ['fresh_apple','stale_apple', 'fresh_bitter_gourd', 'stale_bitter_gourd',
+          'fresh_banana', 'stale_banana', 'fresh_capsicum', 'stale_capsicum', 'fresh_orange',
+          'stale_orange', 'fresh_tomato', 'stale_tomato', 'fresh_meat', 'spoiled_meat']
         
-        # Step 4: Change the result your determined API output
+
+         # Step 4: Map the result to the labels
+        prediction_index = np.argmax(result)
+        predicted_label = labels[prediction_index]
         
-        return "Endpoint not implemented"
+        return json.dumps({
+            'label': predicted_label,
+            # 'accuracy': prediction_index
+        })
     except Exception as e:
         traceback.print_exc()
         response.status_code = 500
