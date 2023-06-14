@@ -76,9 +76,22 @@ class RequestText(BaseModel):
     text: str
 
 
-labels = ['fresh apple', 'stale apple', 'fresh bitter gourd', 'stale bitter gourd',
-          'fresh banana', 'stale banana', 'fresh capsicum', 'stale capsicum', 'fresh orange',
-          'stale orange', 'fresh tomato', 'stale tomato', 'fresh meat', 'spoiled meat']
+labels = [
+    'fresh apple',
+    'fresh banana',
+    'fresh bitter gourd',
+    'fresh capsicum',
+    'fresh meat',
+    'fresh orange',
+    'fresh tomato',
+    'spoiled meat',
+    'stale apple',
+    'stale banana',
+    'stale bitter gourd',
+    'stale capsicum',
+    'stale orange',
+    'stale tomato'
+]
 
 # If your model need image input use this endpoint!
 
